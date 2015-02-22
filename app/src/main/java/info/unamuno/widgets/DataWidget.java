@@ -18,7 +18,7 @@ import info.unamuno.unamuno.R;
  * Use the {@link DataWidget#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DataWidget extends Fragment {
+public class DataWidget extends android.support.v4.app.Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     protected static final String ARG_SOURCE = "source";
 
@@ -70,12 +70,12 @@ public class DataWidget extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+        //try {
+            //mListener = (OnFragmentInteractionListener) activity;
+        //} catch (ClassCastException e) {
+        //    throw new ClassCastException(activity.toString()
+        //            + " must implement OnFragmentInteractionListener");
+        //}
     }
 
     @Override
