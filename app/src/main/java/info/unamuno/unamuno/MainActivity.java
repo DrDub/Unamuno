@@ -1,9 +1,11 @@
 package info.unamuno.unamuno;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -12,9 +14,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -28,9 +32,11 @@ import info.unamuno.location.GPSTracker;
 import info.unamuno.location.Location;
 import info.unamuno.profile.Profile;
 import info.unamuno.profile.Profiles;
+import info.unamuno.widgets.DataWidget;
+import info.unamuno.widgets.DataWidgets;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements DataWidget.OnFragmentInteractionListener {
 
 
     GPSTracker gps;
@@ -98,7 +104,7 @@ public class MainActivity extends ActionBarActivity {
             e.printStackTrace();
         }
         String data = byteArrayOutputStream.toString();
-        Log.v("Text Data", data);
+        //Log.v("Text Data", data);
         try {
             Profiles.load(data);
         } catch (JSONException e) {
@@ -135,6 +141,11 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        // ignore
     }
 
 
@@ -199,15 +210,27 @@ public class MainActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            TextView textViewDesc = (TextView) rootView.findViewById(R.id.section_description);
             ImageView imgView = (ImageView) rootView.findViewById(R.id.section_icon);
+            LinearLayout scroll = (LinearLayout) rootView.findViewById(R.id.scroll_view);
 
             int profileId = getArguments().getInt(ARG_SECTION_NUMBER, -1);
             if (profileId == -1 || profileId >= Profiles.profiles().size()) {
                 textView.append("UNKNOWN: " + String.valueOf(profileId));
             } else {
                 Profile profile = Profiles.profile(profileId);
-                textView.append(profile.getName() + "\n\n" + profile.getDescription());
+                textView.append(profile.getName());
+                textViewDesc.append(profile.getDescription());
                 imgView.setImageBitmap(profile.getIcon());
+
+                for (String source : profile.getSources()) {
+                    Log.d("Main","Creating widget for source "+source);
+                    DataWidget widget = DataWidgets.forSource(source);
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.add(R.id.scroll_view, (android.support.v4.app.Fragment) widget);
+                    fragmentTransaction.commit();
+                }
             }
             return rootView;
         }
