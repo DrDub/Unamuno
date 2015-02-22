@@ -14,15 +14,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
+import info.unamuno.data.Comment;
 import info.unamuno.data.DataManager;
 import info.unamuno.location.GPSTracker;
 import info.unamuno.location.Location;
@@ -34,7 +36,6 @@ public class MainActivity extends ActionBarActivity {
 
 
     GPSTracker gps;
-
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -58,7 +59,7 @@ public class MainActivity extends ActionBarActivity {
 
         gps = new GPSTracker(MainActivity.this);
 
-        DataManager.start();
+        DataManager.start(this);
 
         // check if GPS enabled
         if (gps.canGetLocation()) {
@@ -82,6 +83,13 @@ public class MainActivity extends ActionBarActivity {
             gps.showSettingsAlert();
         }
         DataManager.locate();
+
+        String[] comments = new String[] { "Cool", "Very nice", "Hate it" };
+        int nextInt = new Random().nextInt(3);
+        // save the new comment to the database
+        Comment comment = DataManager.getDataSource().createComment(comments[nextInt]);
+
+        List<Comment> commentList = DataManager.getDataSource().getAllComments();
 
         InputStream inputStream = getResources().openRawResource(R.raw.profiles);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -137,6 +145,17 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        DataManager.start(this);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        DataManager.close();
+        super.onPause();
+    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
