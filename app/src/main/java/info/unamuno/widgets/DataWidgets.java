@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Map;
 public class DataWidgets {
 
     public static abstract class WidgetFactory {
-        public DataWidget newInstance(String source);
+        public abstract DataWidget newInstance(String source);
     }
 
     private static WidgetFactory generic = new WidgetFactory() {
@@ -27,7 +28,9 @@ public class DataWidgets {
 
     public static void load(String widgetsInJson) throws JSONException {
         JSONObject widgets = (JSONObject) new JSONTokener(widgetsInJson).nextValue();
-        for (String source : widgets) {
+        Iterator<String> keys = widgets.keys();
+        while (keys.hasNext()) {
+            String source = keys.next();
             WidgetFactory factory = generic;
             if (source.equalsIgnoreCase("generic")) {
                 factory = new WidgetFactory() {

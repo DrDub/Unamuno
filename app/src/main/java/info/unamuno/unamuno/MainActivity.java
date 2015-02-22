@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
+import info.unamuno.data.DataManager;
 import info.unamuno.location.GPSTracker;
+import info.unamuno.location.Location;
 import info.unamuno.profile.Profile;
 import info.unamuno.profile.Profiles;
 
@@ -32,9 +33,6 @@ import info.unamuno.profile.Profiles;
 public class MainActivity extends ActionBarActivity {
 
 
-    //Button btnShowLocation;
-
-    // GPSTracker class
     GPSTracker gps;
 
 
@@ -60,6 +58,8 @@ public class MainActivity extends ActionBarActivity {
 
         gps = new GPSTracker(MainActivity.this);
 
+        DataManager.start();
+
         // check if GPS enabled
         if (gps.canGetLocation()) {
 
@@ -70,13 +70,18 @@ public class MainActivity extends ActionBarActivity {
                     + "Long: " + longitude + "\n"
                     + "City: " + city;
 
-            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+            Location.latitude = latitude;
+            Location.longitude = longitude;
+            Location.city = city;
+
         } else {
             // can't get location
             // GPS or Network is not enabled
             // Ask user to enable GPS/network in settings
             gps.showSettingsAlert();
         }
+        DataManager.locate();
 
         InputStream inputStream = getResources().openRawResource(R.raw.profiles);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
