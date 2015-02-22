@@ -18,6 +18,16 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Created by annie on 2/21/15.
+
+ * Getting Longitudes and Latitudes
+ *    Adapted fromhttp://www.androidhive.info/2012/07/android-gps-location-manager-tutorial/
+
+ * Turning them into cities
+
+ *    Adapted from http://www.programcreek.com/java-api-examples/index.php?api=android.location.Geocoder
+ */
 public class GPSTracker extends Service implements LocationListener {
 
     private final Context mContext;

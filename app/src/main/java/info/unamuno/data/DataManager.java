@@ -1,6 +1,7 @@
 package info.unamuno.data;
 
 import org.json.JSONException;
+import android.content.Context;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -9,12 +10,23 @@ import org.json.JSONTokener;
  */
 public class DataManager {
 
-    public static void start(){
-        //TODO open the DBs
+    private static DataSource dataSource;
+
+    public static void start(Context context){
+        dataSource = new DataSource(context);
+       dataSource.open();
     }
 
-    public static void locate(){
-        //TODO identify the payload for the current location
+    public static void close() {
+        dataSource.close();
+    }
+
+    public static DataSource getDataSource() {
+        return dataSource;
+    }
+
+    public static void locate() {
+
     }
 
     public static JSONObject fetch(String source){
